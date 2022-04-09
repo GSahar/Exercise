@@ -1,0 +1,24 @@
+<!-- Toolbar -->
+<div class="toolbar" role="banner">
+  <img width="40" />
+  <span>{{ title }}</span>
+  <div class="spacer"></div>
+</div>
+
+<div class="content" role="main">
+  <div class="card-container">
+    <app-tabel-document>
+      <h2>Документы</h2>
+      <app-buttons buttons></app-buttons>
+    </app-tabel-document>
+  </div>
+
+  <div class="card-container">
+    <app-tabel-document-detail>
+      <h2>Состав документа</h2>
+      <app-buttons buttons></app-buttons>
+    </app-tabel-document-detail>
+  </div>
+</div>
+
+<router-outlet></router-outlet>
