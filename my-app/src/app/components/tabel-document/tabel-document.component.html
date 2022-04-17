@@ -4,6 +4,8 @@
   class="ag-theme-alpine"
   [rowData]="rowDataDocum"
   [columnDefs]="columnDefsDocum"
+  [rowSelection]="rowSelection"
+  (selectionChanged)="onSelectionChanged($event)"
 >
 </ag-grid-angular>
 <ng-content select="[buttons]"></ng-content>

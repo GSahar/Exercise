@@ -11,6 +11,7 @@ import com.example.exception.InternalServerError;
 import com.example.model.Documents;
 import com.example.repository.DocumentsRepository;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/documents")
 public class DocumentsController {

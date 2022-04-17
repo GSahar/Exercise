@@ -1,10 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [];
+import { TabelDocumentComponent } from './components/tabel-document/tabel-document.component';
+import { TabelDocumentDetailComponent } from './components/tabel-document-detail/tabel-document-detail.component';
+
+const routes: Routes = [
+  { path: 'documents', component: TabelDocumentComponent },
+  { path: 'documents/detail/values', component: TabelDocumentDetailComponent },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
