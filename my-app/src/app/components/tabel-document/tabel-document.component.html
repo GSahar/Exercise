@@ -1,11 +1,14 @@
 <ng-content select="h2"></ng-content>
-<ag-grid-angular
+<ag-grid-angular gdoc
   style="width: 900px; height: 300px"
   class="ag-theme-alpine"
+  [pagination]="true"
+  [paginationAutoPageSize]="true"
   [rowData]="rowDataDocum"
   [columnDefs]="columnDefsDocum"
   [rowSelection]="rowSelection"
   (selectionChanged)="onSelectionChanged($event)"
+  (gridReady)="onGridReady($event)"
 >
 </ag-grid-angular>
 <ng-content select="[buttons]"></ng-content>

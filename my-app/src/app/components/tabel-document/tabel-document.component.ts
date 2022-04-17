@@ -1,8 +1,20 @@
-import { Component, OnInit, Injectable,EventEmitter,Output } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Injectable,
+  EventEmitter,
+  Output,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import {
+  ColDef,
+  GridApi,
+  GridReadyEvent,
+  FirstDataRenderedEvent,
+} from 'ag-grid-community';
+
 import { TabelDocumentService } from '../../services/tabel-document.service';
 import { TabelDocumentDetailComponent } from '../tabel-document-detail/tabel-document-detail.component';
 import { DataRowDocumentService } from '../../services/dataRow-document.service';
@@ -18,33 +30,45 @@ import { DataRowDocumentService } from '../../services/dataRow-document.service'
 export class TabelDocumentComponent implements OnInit {
   private gridApi!: GridApi;
   idDoc: number = 0;
-
   constructor(
     private router: Router,
     private tabelDocumentService: TabelDocumentService,
     private dataRowDocumentService: DataRowDocumentService,
-    private tabelDocumentDetailComponent: TabelDocumentDetailComponent 
+    private tabelDocumentDetailComponent: TabelDocumentDetailComponent
   ) {}
 
   public rowSelection = 'single';
   columnDefsDocum: ColDef[] = [
-    { field: 's_number', sortable: true, filter: true, headerName: 'Номер' },
-    { field: 'd_date', sortable: true, filter: true, headerName: 'Дата' },
+    {
+      field: 's_number',
+      sortable: true,
+      filter: true,
+      headerName: 'Номер',
+      editable: true,
+    },
+    {
+      field: 'd_date',
+      sortable: true,
+      filter: true,
+      headerName: 'Дата',
+      editable: true,
+    },
     { field: 'n_sum', sortable: true, filter: true, headerName: 'Сумма' },
     {
       field: 's_description',
-      sortable: true,
       filter: true,
       headerName: 'Описание',
+      editable: true,
     },
   ];
-  @Output() onChanged = new EventEmitter<boolean>();
+
   onSelectionChanged(event: any) {
     let rowData = event.api.getSelectedNodes()[0].data;
     this.dataRowDocumentService.objRow$.next(rowData);
-    this.tabelDocumentDetailComponent.changeDetector.markForCheck();
-    this.onChanged.emit(true)
+    this.tabelDocumentDetailComponent.getData();
   }
+
+  //setRowData
 
   rowDataDocum = [];
   ngOnInit(): void {
@@ -56,6 +80,10 @@ export class TabelDocumentComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.dataRowDocumentService.objRow$.unsubscribe();
+  }
+
+  onGridReady(params: GridReadyEvent) {
+    this.gridApi = params.api;
   }
 
   deleteUser(document: Document): void {

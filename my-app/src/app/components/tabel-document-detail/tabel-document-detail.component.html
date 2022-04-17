@@ -1,11 +1,16 @@
 <ng-content select="h2"></ng-content>
 <!-- <input [ngModel]="idDoc" (ngModelChange)="onNameChange($event)" /> -->
-<ag-grid-angular
+<ag-grid-angular gdocdetail
   style="width: 900px; height: 300px"
   class="ag-theme-alpine"
+  [pagination]="true"
+  [paginationAutoPageSize]="true"
   [rowData]="rowDataDocumDetail"
   [columnDefs]="columnDefsDocumDetail"
-  (onChanged)="ngOnInit()"
+  [rowSelection]="rowSelection"
+  (gridReady)="onGridReady($event)"
+  (selectionChanged)="onSelectionChanged($event)"
+  [gridOptions]="gridOptions"
 >
 </ag-grid-angular>
 <ng-content select="[buttons]"></ng-content>

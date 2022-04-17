@@ -11,13 +11,13 @@ export class DataRowDocumentService {
   //objRow: any = {}
   constructor() {}
   public objRow$ = new BehaviorSubject(0);
+  public objRowDetail$ = new BehaviorSubject(0);
 
   public changeDataRow(obj: any) {
-    this.objRow$.subscribe({
-      next: (v) => console.log(`observerB: ${v}`)
-    });
-
     this.objRow$.next(obj);
-    //this.objRow$ = obj;
+  }
+
+  public changeDataRowDetail(obj: any) {
+    this.objRowDetail$.next(obj);
   }
 }

@@ -4,13 +4,14 @@ import {
   Injectable,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
-  Input, Output,EventEmitter,NgModule
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
-import { Subscription } from 'rxjs';
+import {
+  ColDef,
+  GridApi,
+  GridReadyEvent,
+  GridOptions,
+} from 'ag-grid-community';
 
 import { DocDetail } from '../../modules/doc-detail.module';
 import { TabelDocDetailService } from '../../services/tabel-document-detail.service';
@@ -26,7 +27,9 @@ import { DataRowDocumentService } from '../../services/dataRow-document.service'
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class TabelDocumentDetailComponent implements OnInit {
-  private gridApi!: GridApi;
+  private gridApi1!: GridApi;
+
+  public rowSelection = 'single';
 
   constructor(
     private router: Router,
@@ -35,41 +38,78 @@ export class TabelDocumentDetailComponent implements OnInit {
     public changeDetector: ChangeDetectorRef
   ) {}
 
-  @Input() idDoc:string = "";
-    @Output() userNameChange = new EventEmitter<string>();
-    onNameChange(model: string){
-         
-        this.idDoc = model;
-        this.userNameChange.emit(model);
-    }
-
-  private subs!: Subscription;
+  public rowDataDocumDetail: any[] = [];
 
   columnDefsDocumDetail: ColDef[] = [
-    { field: 's_num_doc', sortable: true, filter: true, headerName: 'Номер' },
+    {
+      field: 's_number',
+      sortable: true,
+      filter: true,
+      headerName: 'Номер',
+      editable: true,
+    },
     {
       field: 's_name',
       sortable: true,
       filter: true,
       headerName: 'Наименование',
+      editable: true,
     },
-    { field: 'n_sum_doc', sortable: true, filter: true, headerName: 'Сумма' },
+    {
+      field: 'n_sum',
+      sortable: true,
+      filter: true,
+      headerName: 'Сумма',
+      editable: true,
+    },
   ];
 
-  rowDataDocumDetail = [];
+  public gridOptions: GridOptions = {
+    columnDefs: this.columnDefsDocumDetail,
+    rowData: this.rowDataDocumDetail,
+    rowModelType: 'clientSide',
+  };
+
+  onSelectionChanged(event: any) {
+    let rowData = event.api.getSelectedNodes()[0].data;
+    this.dataRowDocumentService.objRowDetail$.next(rowData);
+    console.log(rowData)
+  }
 
   ngOnInit(): void {
-    let rowIdDoc: any = this.dataRowDocumentService.objRow$.getValue();
     this.dataRowDocumentService.objRow$.subscribe((v) => v);
+    this.dataRowDocumentService.objRowDetail$.subscribe((v) => v);
+    this.gridOptions.columnDefs = this.columnDefsDocumDetail;
+    let rowIdDoc: any = this.dataRowDocumentService.objRow$.getValue();
+
     this.tabelDocDetailService
-      .getDocDetail(rowIdDoc.id || 0)
+      .getDocDetail(rowIdDoc.id || 2)
       .subscribe((data: any) => {
         console.log('selection', data);
         this.rowDataDocumDetail = data;
       });
   }
 
-  onGridReady(event: GridReadyEvent) {
+  getData() {
+    this.dataRowDocumentService.objRow$.subscribe((v) => v);
+    let rowIdDoc: any = this.dataRowDocumentService.objRow$.getValue();
+
+    this.tabelDocDetailService
+      .getDocDetail(rowIdDoc.id)
+      .subscribe((data: any) => {
+        this.rowDataDocumDetail = data.map((item: any) => {
+          return {
+            ...item,
+            key: item.id,
+          };
+        });
+        console.log(data);
+        this.gridOptions.api?.setRowData(this.rowDataDocumDetail);
+      });
+  }
+
+  onGridReady(params: GridReadyEvent) {
+    this.gridApi1 = params.api;
   }
 
   deleteUser(detail: DocDetail): void {
@@ -81,6 +121,7 @@ export class TabelDocumentDetailComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.subs.unsubscribe();
+    this.dataRowDocumentService.objRow$.unsubscribe();
+    this.dataRowDocumentService.objRowDetail$.unsubscribe();
   }
 }

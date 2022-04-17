@@ -16,7 +16,7 @@ public class QueryDetail {
 			+ ",doc_detail.s_number"			
 			+ ",doc_detail.id"
 			+ ",doc_detail.n_sum"
-			+ " from document.documents_detail doc_detail where doc_detail.id_doc = ?";
+			+ " from document.documents_detail doc_detail where doc_detail.id_doc = ? order by doc_detail.id desc";
 
 	public static final String SAVE = 
 			"insert into document.documents_detail(id_doc, s_name, s_number, n_sum, id) "
